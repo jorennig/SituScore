@@ -3,32 +3,24 @@
 """
 Created on Tue Sep 18 13:08:19 2018
 
-@author: beauchamplab
-"""
-## Clean up
+@author: Johannes Rennig
+@project: SituScore for Insight Data Science Toronto 18C
+@description: consulting project for Altus Assessments, Toronto, ON, Canada
 
+This script loads in the data set cleaned from statements reported in French. 
+
+
+"""
 ## Import packages
 import pandas as pd
 import numpy as np
-import scipy
-import re
-import os
 import matplotlib.pyplot as plt
 import nltk
-from nltk.corpus import stopwords
-from nltk import wordpunct_tokenize
-
-## Define important things
-cwd = os.getcwd()
 
 ## Read in data
 print('read data')
-#data_tot = pd.read_csv('data_clean_1.csv')
-#data = data_tot.sample(frac=0.01)
-
 data = pd.read_csv('data_clean_1.csv')
 data = data[np.isfinite(data['score'])] # Remove NaN in 'score'
-#data = data.sample(frac=0.001)
 
 #num_sub = pd.DataFrame(data['applicantUserId'].unique())
 #num_rater = pd.DataFrame(data['raterUserId'].unique())
@@ -36,17 +28,17 @@ data = data[np.isfinite(data['score'])] # Remove NaN in 'score'
 #num_test = pd.DataFrame(data['testId'].unique())
 #num_resp = pd.DataFrame(data['responseId'].unique())
 
-## Plot distribution of scores
-#scores = np.unique(data['score'])
-#min_score = min(data['score'])
-#max_score = max(data['score'])
-#
-#plt.hist(data['score'], bins=len(scores))
-#plt.title('Histogram Scores')
-#plt.xlabel('Scores')
-#plt.ylabel('Count')
-#plt.savefig('Histo_Scores.png', bbox_inches='tight')
-#plt.close()
+# Plot distribution of scores
+scores = np.unique(data['score'])
+min_score = min(data['score'])
+max_score = max(data['score'])
+
+plt.hist(data['score'], bins=len(scores))
+plt.title('Histogram Scores')
+plt.xlabel('Scores')
+plt.ylabel('Count')
+plt.savefig('Histo_Scores.png', bbox_inches='tight')
+plt.close()
 
 ## NLP pre-processing
 print('- NLP pre-processing -')
@@ -118,6 +110,7 @@ score = data.loc[:, ['score']]
 score.to_csv('score.csv',index=False)
 
 ## Remove stopwords
+from nltk.corpus import stopwords
 stopwords = stopwords.words('english')
 stopwords_add = ['would','could','can','u','o','e','m','n','t']
 stopwords = stopwords + stopwords_add
@@ -186,23 +179,7 @@ sent_word_count = pd.DataFrame(sent_word_count)
 sent_word_count.columns = ['sent_word_pc']
 sent_word_count.to_csv('sent_word_count.csv',index=False)
 
-#tokens_clean = pd.DataFrame(tokens_clean)
-#tokens_clean.columns = ['tokens_clean']
-#tokens_clean.to_csv('tokens_clean.csv',index=False)
-
-## Vectorize
-#from sklearn.model_selection import train_test_split
-#from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-#
-#def tfidf(input):
-#    tfidf_vectorizer = TfidfVectorizer()
-#
-#    train = tfidf_vectorizer.fit_transform(input)
-#
-#    return train, tfidf_vectorizer
-#
-#list_labels = data['score'].tolist()
-
+# Remodel tokens back to strings
 tokens_str = []
 for idx in range(0, len(tokens_clean)):
     print(f'Str: Item {idx+1} of {len(tokens_clean)}')
