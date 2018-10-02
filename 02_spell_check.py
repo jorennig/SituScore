@@ -10,9 +10,11 @@ Created on Tue Sep 18 13:08:19 2018
 This script loads in the data set cleaned from statements reported in French. 
 After tokenizing each statement using NLTK the script performs a spell check 
 on each word using thr Python library spellchecker and saves the number of 
-misspelled words per statement. The script also deletes every misspelled word
-but this is not recommended since it takes very long. Saving the corrected 
-statements into a data frame and then into a csv breaks the kernel. 
+misspelled words per statement into a csv ('num_misspelled.csv'). 
+
+The script also deletes every misspelled word but this is not recommended 
+since it takes very long. Saving the corrected statements into a data frame 
+and then into a csv breaks the kernel. 
 
 """
 ## Clean up
