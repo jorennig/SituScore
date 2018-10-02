@@ -20,7 +20,7 @@ import nltk
 ## Read in data
 print('read data')
 data = pd.read_csv('data_clean_1.csv')
-data = data[np.isfinite(data['score'])] # Remove NaN in 'score'
+#data = data[np.isfinite(data['score'])] # Remove NaN in 'score'
 
 #num_sub = pd.DataFrame(data['applicantUserId'].unique())
 #num_rater = pd.DataFrame(data['raterUserId'].unique())
@@ -43,14 +43,13 @@ plt.close()
 ## NLP pre-processing
 print('- NLP pre-processing -')
 
-# Find number of words, sentences, spelling errors
+# Tokenize and find number of words
 from nltk.tokenize import RegexpTokenizer
 
 tokenizer = RegexpTokenizer(r'\w+')
 data['tokens_pre_clean'] = data['answers'].apply(tokenizer.tokenize)
 
 data['num_tokens_pre'] = data['tokens_pre_clean'].apply(len)
-#data = data.drop(['tokens_pre_clean'], axis=1)
 
 ## Standardize text - all lower case
 print('standardize text - all lower case')
@@ -105,9 +104,6 @@ data['sent_sentence_std'] = sent_sentence_std
 
 sent_analysis = data.loc[:, ['sent_statement','sent_sentence_mean','sent_sentence_std']]
 sent_analysis.to_csv('sent_analysis.csv',index=False)
-
-score = data.loc[:, ['score']]
-score.to_csv('score.csv',index=False)
 
 ## Remove stopwords
 from nltk.corpus import stopwords
@@ -192,3 +188,7 @@ list_corpus = tokens_str
 tokens_str_df = pd.DataFrame(tokens_str)
 tokens_str_df.columns = ['tokens_str']
 tokens_str_df.to_csv('tokens_str.csv',index=False)
+
+# To avoid having to load all data for the models the score column is saved separately
+score = data.loc[:, ['score']]
+score.to_csv('score.csv',index=False)
