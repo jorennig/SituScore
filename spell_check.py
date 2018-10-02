@@ -8,14 +8,17 @@ Created on Tue Sep 18 13:08:19 2018
 @description: consulting project for Altus Assessments, Toronto, ON, Canada
 
 This script loads in the data set cleaned from statements reported in French. 
-
+After tokenizing each statement using NLTK the script performs a spell check 
+on each word using thr Python library spellchecker and saves the number of 
+misspelled words per statement. The script also deletes every misspelled word
+but this is not recommended since it takes very long. Saving the corrected 
+statements into a data frame and then into a csv breaks the kernel. 
 
 """
 ## Clean up
 
 ## Import packages
 import pandas as pd
-from nltk import wordpunct_tokenize
 from nltk.tokenize import RegexpTokenizer
 from spellchecker import SpellChecker
 
@@ -61,9 +64,8 @@ for idx in range(0, len(data)):
     if len(tokens_c) < 0:
         tokens_c = 'nan'
 
-    #tokens_c = list(tokens_c)
-    
-    #tokens_corr.append(tokens_c)
+    tokens_c = list(tokens_c)    
+    tokens_corr.append(tokens_c)
     tokens_corr = tokens_corr.append(tokens_c,ignore_index=True)
 
 
@@ -71,6 +73,6 @@ num_misspelled = pd.DataFrame(num_misspelled)
 num_misspelled.columns = ['num_misspelled']
 num_misspelled.to_csv('num_misspelled.csv')
 
-#tokens_corr = pd.DataFrame(tokens_corr)
+tokens_corr = pd.DataFrame(tokens_corr)
 tokens_corr.columns = ['tokens_corr']
 tokens_corr.to_csv('tokens_corr.csv')
