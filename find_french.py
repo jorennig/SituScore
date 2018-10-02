@@ -3,13 +3,31 @@
 """
 Created on Tue Sep 25 10:49:55 2018
 
-@author: beauchamplab
+@author: Johannes Rennig
+@project: SituScore for Insight Data Science Toronto 18C
+@description: consulting project for Altus Assessments, Toronto, ON, Canada
+
+This script loads in the origonal data and idenfifies statement written in 
+French and removes them from the data set. This is done by identifying french
+stopwords from the NLTK stopword corpus of several European languages. 
+
+The data is saved to csv under the name 'data_clean_1.csv'.
+
 """
 
-## Idenitfy and EXTERMINATE French statements
-print('identify french')
-lang_ans = []
+## Import packages
+import pandas as pd
+from nltk.corpus import stopwords
+from nltk import wordpunct_tokenize
 
+# Load data
+print('Load data')
+data = pd.read_csv('rating-metrics.scores.csv')
+
+## Idenitfy and remove French statements
+print('Identify french')
+
+lang_ans = []
 for idx in range(0, len(data)):
     text = data['answers'].iloc[idx]
     tokens = wordpunct_tokenize(text)
@@ -35,3 +53,5 @@ data = data[data['lang'] == 'english']
 data = data.drop(['lang'], axis=1)
 
 del language, lang_ans, languages_ratios, most_rated_language, text, tokens, words
+
+data.to_csv('data_clean_1.csv')
