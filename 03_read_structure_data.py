@@ -9,6 +9,25 @@ Created on Tue Sep 18 13:08:19 2018
 
 This script loads in the data set cleaned from statements reported in French. 
 
+First it creates and saves a histogramm of the distribution of scores of the
+whole sample.
+
+Then it performs a general NLP preprocessing with the statements including
+the following steps: 
+- tokenization
+- all words to lower case
+
+The next analysis step is a sentiment analysis done with the NLTK package VADER. 
+In a first pass a whole statement is anlyzed, then each sentence gets analyzed
+to create an average sentiment score and the dispersion of sentiment ratings 
+across a statement caluclating the standard deviation. A further sentiment
+analysis calculates the percentage of emotional words per statement.
+
+The next part of the script removes all stopwords and condicts a PoS tagging to
+find the percentage of nouns, adjectives and verbs used in each statement.
+
+Finally the script saves the pre-processed statements as a list to dataframe
+for later modeling with tf-idf and bag of words techniques.
 
 """
 ## Import packages
