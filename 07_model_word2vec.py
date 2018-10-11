@@ -141,7 +141,7 @@ score[score['score'] == 9] = 3
 labels = score['score'].tolist()
 
 # Model with summarized rating scale
-print('prepare and run Bag of Words model with summarized rating scale')
+print('prepare and run word2vec model with summarized rating scale')
 
 embeddings = get_word2vec_embeddings(word2vec, tokens_clean)
 X_train_word2vec, X_test_word2vec, y_train_word2vec, y_test_word2vec = train_test_split(embeddings, labels, test_size=0.2, random_state=40)
