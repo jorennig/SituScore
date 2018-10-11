@@ -126,10 +126,10 @@ score[score['score'] == 7] = 3
 score[score['score'] == 8] = 3
 score[score['score'] == 9] = 3
 
-list_labels = score['score'].tolist()
+labels = score['score'].tolist()
 
 # Model with summarized rating scale
-print('prepare and run tf-idf model with full rating scale')
+print('prepare and run tf-idf model with summarized rating scale')
 
 X_train, X_test, y_train, y_test = train_test_split(corpus, labels, test_size=0.2,random_state=40)
 

@@ -6,8 +6,8 @@ Created on Thu Sep 27 13:42:52 2018
 @description: consulting project for Altus Assessments, Toronto, ON, Canada
 
 This script uses the extractes text features (number of misspelled words, 
-word types [percent nouns, verbs, adjectives], ) in two versions of a 
-multinomial logistic regression:
+word types [percent nouns, verbs, adjectives], ) and all metrics from the 
+sentiment analyses in two versions of a multinomial logistic regression:
 - 9 categories (full rating scale 1-9)
 - 3 categories (rating scale summarized: [1,2,3] = 1, [4,5,6] = 2, [7,8,9] = 3)
 
