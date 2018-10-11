@@ -36,8 +36,8 @@ nan_rows =  nan_rows.index.values
 score = score.drop(score.index[nan_rows])
 tokens_str = tokens_str.drop(tokens_str.index[nan_rows])
 
-list_labels = score['score'].tolist()
-list_corpus = tokens_str['tokens_str'].tolist()
+labels = score['score'].tolist()
+corpus = tokens_str['tokens_str'].tolist()
 
 ## Define functions
 def get_metrics(y_test, y_predicted):  
@@ -92,7 +92,7 @@ def cv(input):
 # Model with full rating scale
 print('prepare and run Bag of Words model with full rating scale')
 
-X_train, X_test, y_train, y_test = train_test_split(list_corpus, list_labels, test_size=0.2,random_state=40)
+X_train, X_test, y_train, y_test = train_test_split(corpus, labels, test_size=0.2,random_state=40)
 
 X_train_count, count_vectorizer = cv(X_train)
 X_test_count = count_vectorizer.transform(X_test)
@@ -131,7 +131,7 @@ list_labels = score['score'].tolist()
 # Model with summarized rating scale
 print('prepare and run Bag of Words model with summarized rating scale')
 
-X_train, X_test, y_train, y_test = train_test_split(list_corpus, list_labels, test_size=0.2,random_state=40)
+X_train, X_test, y_train, y_test = train_test_split(corpus, labels, test_size=0.2,random_state=40)
 
 X_train_count, count_vectorizer = cv(X_train)
 X_test_count = count_vectorizer.transform(X_test)

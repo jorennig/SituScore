@@ -23,11 +23,9 @@ from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_sc
 import itertools
 from sklearn.metrics import confusion_matrix
 
-from sklearn.feature_extraction.text import CountVectorizer
 from nltk.tokenize import RegexpTokenizer
 
 import gensim
-
 word2vec_path = "GoogleNews-vectors-negative300.bin.gz"
 word2vec = gensim.models.KeyedVectors.load_word2vec_format(word2vec_path, binary=True)
 
@@ -42,7 +40,7 @@ nan_rows =  nan_rows.index.values
 score = score.drop(score.index[nan_rows])
 tokens_str = tokens_str.drop(tokens_str.index[nan_rows])
 
-list_labels = score['score'].tolist()
+labels = score['score'].tolist()
 
 tokenizer = RegexpTokenizer(r'\w+')
 tokens_clean = pd.DataFrame()
@@ -111,25 +109,20 @@ def get_word2vec_embeddings(vectors, clean_questions, generate_missing=False):
 # Model with full rating scale
 print('prepare and run word2vec model with full rating scale')
 
-X_train, X_test, y_train, y_test = train_test_split(list_corpus, list_labels, test_size=0.2,random_state=40)
+embeddings = get_word2vec_embeddings(word2vec, tokens_clean)
+X_train_word2vec, X_test_word2vec, y_train_word2vec, y_test_word2vec = train_test_split(embeddings, labels, test_size=0.2, random_state=40)
 
-X_train_count, count_vectorizer = cv(X_train)
-X_test_count = count_vectorizer.transform(X_test)
+clf_w2v = LogisticRegression(C=30.0, class_weight='balanced', solver='newton-cg', multi_class='multinomial', random_state=40)
+clf_w2v.fit(X_train_word2vec, y_train_word2vec)
+y_predicted_word2vec = clf_w2v.predict(X_test_word2vec)
 
-print('run Bag of Words model')
-clf_count = LogisticRegression(C=30.0, class_weight='balanced', solver='newton-cg', 
-                         multi_class='multinomial', n_jobs=-1, random_state=40)
-clf_count.fit(X_train_count, y_train)
+accuracy_word2vec, precision_word2vec, recall_word2vec, f1_word2vec = get_metrics(y_test_word2vec, y_predicted_word2vec)
+print("accuracy = %.3f, precision = %.3f, recall = %.3f, f1 = %.3f" % (accuracy_word2vec, precision_word2vec, 
+                                                                       recall_word2vec, f1_word2vec))
 
-y_predicted_count = clf_count.predict(X_test_count)
-
-accuracy, precision, recall, f1 = get_metrics(y_test, y_predicted_count)
-print("accuracy = %.3f, precision = %.3f, recall = %.3f, f1 = %.3f" % (accuracy, precision,recall, f1))
-
-print('evaluate & plot tf-idf model')
-cm = confusion_matrix(y_test, y_predicted_count)
+cm_w2v = confusion_matrix(y_test_word2vec, y_predicted_word2vec)
 fig = plt.figure(figsize=(10, 10))
-plot = plot_confusion_matrix(cm, classes=['1','2','3','4','5','6','7','8','9'], normalize=True, title='')
+plot = plot_confusion_matrix(cm_w2v, classes=['1','2','3','4','5','6','7','8','9'], normalize=True, title='')
 plt.savefig('Confusion_Matrix_word2vec_full_scale.png', bbox_inches='tight')
 
 
@@ -145,27 +138,23 @@ score[score['score'] == 7] = 3
 score[score['score'] == 8] = 3
 score[score['score'] == 9] = 3
 
-list_labels = score['score'].tolist()
+labels = score['score'].tolist()
 
 # Model with summarized rating scale
 print('prepare and run Bag of Words model with summarized rating scale')
 
-X_train, X_test, y_train, y_test = train_test_split(list_corpus, list_labels, test_size=0.2,random_state=40)
+embeddings = get_word2vec_embeddings(word2vec, tokens_clean)
+X_train_word2vec, X_test_word2vec, y_train_word2vec, y_test_word2vec = train_test_split(embeddings, labels, test_size=0.2, random_state=40)
 
-X_train_count, count_vectorizer = cv(X_train)
-X_test_count = count_vectorizer.transform(X_test)
+clf_w2v = LogisticRegression(C=30.0, class_weight='balanced', solver='newton-cg', multi_class='multinomial', random_state=40)
+clf_w2v.fit(X_train_word2vec, y_train_word2vec)
+y_predicted_word2vec = clf_w2v.predict(X_test_word2vec)
 
-print('run Bag of Words model')
-clf_count = LogisticRegression(C=30.0, class_weight='balanced', solver='newton-cg', 
-                         multi_class='multinomial', n_jobs=-1, random_state=40)
-clf_count.fit(X_train_count, y_train)
+accuracy_word2vec, precision_word2vec, recall_word2vec, f1_word2vec = get_metrics(y_test_word2vec, y_predicted_word2vec)
+print("accuracy = %.3f, precision = %.3f, recall = %.3f, f1 = %.3f" % (accuracy_word2vec, precision_word2vec, 
+                                                                       recall_word2vec, f1_word2vec))
 
-y_predicted_count = clf_count.predict(X_test_count)
-
-accuracy, precision, recall, f1 = get_metrics(y_test, y_predicted_count)
-print("accuracy = %.3f, precision = %.3f, recall = %.3f, f1 = %.3f" % (accuracy, precision,recall, f1))
-
-cm = confusion_matrix(y_test, y_predicted_count)
+cm_w2v = confusion_matrix(y_test_word2vec, y_predicted_word2vec)
 fig = plt.figure(figsize=(10, 10))
-plot = plot_confusion_matrix(cm, classes=['1','2','3'], normalize=True, title='')
-plt.savefig('Confusion_Matrix_BoW_summarized.png', bbox_inches='tight')
+plot = plot_confusion_matrix(cm_w2v, classes=['1','2','3'], normalize=True, title='')
+plt.savefig('Confusion_Matrix_word2vec_summarized.png', bbox_inches='tight')

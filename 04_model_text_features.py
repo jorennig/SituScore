@@ -46,7 +46,7 @@ tokens_str = tokens_str.drop(tokens_str.index[nan_rows])
 features = pd.concat([num_misspelled, word_type_pc, sent_word_count, sent_analysis],axis=1)
 features = features.drop(columns=['other'])
 
-lables = np.ravel(score,order='F')
+labels = np.ravel(score,order='F')
 
 ## Define functions
 def get_metrics(y_test, y_predicted):  
@@ -93,7 +93,7 @@ def plot_confusion_matrix(cm, classes,normalize=False,title='',cmap=plt.cm.winte
 # Model with full rating scale
 print('prepare and run feature model with full rating scale')
 
-X_train, X_test, y_train, y_test = train_test_split(features, lables, test_size=0.2,random_state=40)
+X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2,random_state=40)
 
 clf_features = LogisticRegression(C=30.0, class_weight='balanced', solver='newton-cg', 
                          multi_class='multinomial', n_jobs=-1, random_state=40)
@@ -128,7 +128,7 @@ label = np.ravel(score,order='F')
 # Model with summarized rating scale
 print('prepare and run feature model with summarized rating scale')
 
-X_train, X_test, y_train, y_test = train_test_split(features, lables, test_size=0.2,random_state=40)
+X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2,random_state=40)
 
 clf_features = LogisticRegression(C=30.0, class_weight='balanced', solver='newton-cg', 
                          multi_class='multinomial', n_jobs=-1, random_state=40)
