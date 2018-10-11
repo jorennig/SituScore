@@ -8,7 +8,10 @@ Created on Thu Sep 27 13:42:52 2018
 @description: consulting project for Altus Assessments, Toronto, ON, Canada
 
 This script uses the extractes features (number of misspelled words, word types
-[percent nouns, verbs, adjectives], ) in multinomial  
+[percent nouns, verbs, adjectives], ) in two versions of a multinomial logistic
+regression:
+- 9 categories (full rating scale 1-9)
+- 3 categories (rating scale summarized: [1,2,3] = 1, [4,5,6] = 2, [7,8,9] = 3)
 
 """
 
@@ -37,7 +40,7 @@ tokens_str = tokens_str.drop(tokens_str.index[nan_rows])
 
 features = pd.concat([num_misspelled, word_type_pc, sent_word_count, sent_analysis],axis=1)
 
-features = features.drop(columns=['other', 'sent_statement','num_misspelled','noun','adjective','verb'])
+features = features.drop(columns=['other'])
 score = np.ravel(score,order='F')
 
 print('prepare feature model')
@@ -108,31 +111,3 @@ cm = confusion_matrix(y_test, y_predicted)
 fig = plt.figure(figsize=(10, 10))
 plot = plot_confusion_matrix(cm, classes=['1','2','3','4','5','6','7','8','9'], normalize=True, title='Confusion matrix')
 plt.savefig('Confusion_Matrix_features.png', bbox_inches='tight')
-
-### ROC, AUC features
-#from sklearn.metrics import roc_curve, roc_auc_score
-#
-### Computing false and true positive rates
-#rating_test_1 = np.where(y_test == 1)[0]
-#rating_pre_1 = np.where(y_predicted == 1)[0]
-#rating_1 = np.concatenate((rating_test_1, rating_pre_1), axis=0)
-#
-#y_test_1 = y_test[rating_1]
-#y_predicted_1 = y_predicted[rating_1]
-#y_predicted_1_idx = y_predicted_1 !=1 #[y_predicted_1 ~= 1]
-#y_predicted_1[y_predicted_1_idx] = 0
-#
-#fpr, tpr,_ = roc_curve(y_test_1,y_predicted_1,drop_intermediate=False)
-#
-#import matplotlib.pyplot as plt
-#plt.figure()
-### Adding the ROC
-#plt.plot(fpr, tpr, color='red',
-# lw=2, label='ROC curve')
-### Random FPR and TPR
-#plt.plot([0, 1], [0, 1], color='blue', lw=2, linestyle='--')
-### Title and label
-#plt.xlabel('FPR')
-#plt.ylabel('TPR')
-#plt.title('ROC curve')
-#plt.show()
