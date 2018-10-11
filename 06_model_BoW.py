@@ -5,9 +5,8 @@ Created on Thu Sep 27 13:42:52 2018
 @project: SituScore for Insight Data Science Toronto 18C
 @description: consulting project for Altus Assessments, Toronto, ON, Canada
 
-This script uses the extractes text features (number of misspelled words, 
-word types [percent nouns, verbs, adjectives], ) in two versions of a 
-multinomial logistic regression:
+This script uses all relevant statements and vectorizes them using Bag of Words
+in two versions of a multinomial logistic regression:
 - 9 categories (full rating scale 1-9)
 - 3 categories (rating scale summarized: [1,2,3] = 1, [4,5,6] = 2, [7,8,9] = 3)
 
@@ -24,29 +23,21 @@ from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_sc
 import itertools
 from sklearn.metrics import confusion_matrix
 
+from sklearn.feature_extraction.text import CountVectorizer
+
 ## Load and prepare data
 print('read data')
 score = pd.read_csv('score.csv')
-num_misspelled = pd.read_csv('num_misspelled.csv')
-word_type_pc = pd.read_csv('word_type_pc.csv')
-sent_word_count = pd.read_csv('sent_word_count.csv')
-sent_analysis = pd.read_csv('sent_analysis.csv')
 tokens_str = pd.read_csv('tokens_str.csv')
 
 nan_rows = tokens_str[tokens_str['tokens_str'].isnull()]
 nan_rows =  nan_rows.index.values
 
 score = score.drop(score.index[nan_rows])
-num_misspelled = num_misspelled.drop(num_misspelled.index[nan_rows])
-word_type_pc = word_type_pc.drop(word_type_pc.index[nan_rows])
-sent_word_count = sent_word_count.drop(sent_word_count.index[nan_rows])
-sent_analysis = sent_analysis.drop(sent_analysis.index[nan_rows])
 tokens_str = tokens_str.drop(tokens_str.index[nan_rows])
 
-features = pd.concat([num_misspelled, word_type_pc, sent_word_count, sent_analysis],axis=1)
-features = features.drop(columns=['other'])
-
-lables = np.ravel(score,order='F')
+list_labels = score['score'].tolist()
+list_corpus = tokens_str['tokens_str'].tolist()
 
 ## Define functions
 def get_metrics(y_test, y_predicted):  
@@ -90,28 +81,40 @@ def plot_confusion_matrix(cm, classes,normalize=False,title='',cmap=plt.cm.winte
     return plt
 
 
+def cv(input):
+    count_vectorizer = CountVectorizer()
+
+    emb = count_vectorizer.fit_transform(input)
+
+    return emb, count_vectorizer
+
+
 # Model with full rating scale
-print('prepare and run feature model with full rating scale')
+print('prepare and run Bag of Words model with full rating scale')
 
-X_train, X_test, y_train, y_test = train_test_split(features, lables, test_size=0.2,random_state=40)
+X_train, X_test, y_train, y_test = train_test_split(list_corpus, list_labels, test_size=0.2,random_state=40)
 
-clf_features = LogisticRegression(C=30.0, class_weight='balanced', solver='newton-cg', 
+X_train_count, count_vectorizer = cv(X_train)
+X_test_count = count_vectorizer.transform(X_test)
+
+print('run Bag of Words model')
+clf_count = LogisticRegression(C=30.0, class_weight='balanced', solver='newton-cg', 
                          multi_class='multinomial', n_jobs=-1, random_state=40)
-clf_features.fit(X_train, y_train)
+clf_count.fit(X_train_count, y_train)
 
-y_predicted = clf_features.predict(X_test)
+y_predicted_count = clf_count.predict(X_test_count)
 
-accuracy_features, precision_features, recall_features, f1_features = get_metrics(y_test, y_predicted)
-print("accuracy = %.3f, precision = %.3f, recall = %.3f, f1 = %.3f" % (accuracy_features, precision_features,recall_features, f1_features))
+accuracy, precision, recall, f1 = get_metrics(y_test, y_predicted_count)
+print("accuracy = %.3f, precision = %.3f, recall = %.3f, f1 = %.3f" % (accuracy, precision,recall, f1))
 
-print('evaluate & plot model')
-cm = confusion_matrix(y_test, y_predicted)
+print('evaluate & plot tf-idf model')
+cm = confusion_matrix(y_test, y_predicted_count)
 fig = plt.figure(figsize=(10, 10))
 plot = plot_confusion_matrix(cm, classes=['1','2','3','4','5','6','7','8','9'], normalize=True, title='')
-plt.savefig('Confusion_Matrix_features_full_scale.png', bbox_inches='tight')
+plt.savefig('Confusion_Matrix_BoW_full_scale.png', bbox_inches='tight')
 
 
-## Summarize scores
+## Summarize to three categories
 score[score['score'] == 2] = 1
 score[score['score'] == 3] = 1
 
@@ -123,24 +126,28 @@ score[score['score'] == 7] = 3
 score[score['score'] == 8] = 3
 score[score['score'] == 9] = 3
 
-label = np.ravel(score,order='F')
+list_labels = score['score'].tolist()
 
 # Model with summarized rating scale
-print('prepare and run feature model with summarized rating scale')
+print('prepare and run Bag of Words model with full rating scale')
 
-X_train, X_test, y_train, y_test = train_test_split(features, lables, test_size=0.2,random_state=40)
+X_train, X_test, y_train, y_test = train_test_split(list_corpus, list_labels, test_size=0.2,random_state=40)
 
-clf_features = LogisticRegression(C=30.0, class_weight='balanced', solver='newton-cg', 
+X_train_tfidf, tfidf_vectorizer = tfidf(X_train)
+X_test_tfidf = tfidf_vectorizer.transform(X_test)
+
+print('run tf-idf model')
+clf_tfidf = LogisticRegression(C=30.0, class_weight='balanced', solver='newton-cg', 
                          multi_class='multinomial', n_jobs=-1, random_state=40)
-clf_features.fit(X_train, y_train)
+clf_tfidf.fit(X_train_tfidf, y_train)
 
 print('evaluate & plot')
-y_predicted = clf_features.predict(X_test)
+y_predicted_tfidf = clf_tfidf.predict(X_test_tfidf)
 
-accuracy_features, precision_features, recall_features, f1_features = get_metrics(y_test, y_predicted)
-print("accuracy = %.3f, precision = %.3f, recall = %.3f, f1 = %.3f" % (accuracy_features, precision_features,recall_features, f1_features))
+accuracy_tfidf, precision_tfidf, recall_tfidf, f1_tfidf = get_metrics(y_test, y_predicted_tfidf)
+print("accuracy = %.3f, precision = %.3f, recall = %.3f, f1 = %.3f" % (accuracy_tfidf, precision_tfidf,recall_tfidf, f1_tfidf))
 
-cm = confusion_matrix(y_test, y_predicted)
+cm = confusion_matrix(y_test, y_predicted_tfidf)
 fig = plt.figure(figsize=(10, 10))
-plot = plot_confusion_matrix(cm, classes=['1','2','3'], normalize=True, title=' ')
-plt.savefig('Confusion_Matrix_features_summarized.png', bbox_inches='tight')
+plot = plot_confusion_matrix(cm, classes=['1','2','3'], normalize=True, title='')
+plt.savefig('Confusion_Matrix_tfidf_summarized.png', bbox_inches='tight')
