@@ -5,7 +5,7 @@ Created on Thu Sep 27 13:42:52 2018
 @project: SituScore for Insight Data Science Toronto 18C
 @description: consulting project for Altus Assessments, Toronto, ON, Canada
 
-This script uses all relevant statements and vectorizes them using Bag of Words
+This script uses all relevant statements and vectorizes them using word2vec
 in two versions of a multinomial logistic regression:
 - 9 categories (full rating scale 1-9)
 - 3 categories (rating scale summarized: [1,2,3] = 1, [4,5,6] = 2, [7,8,9] = 3)
@@ -24,6 +24,12 @@ import itertools
 from sklearn.metrics import confusion_matrix
 
 from sklearn.feature_extraction.text import CountVectorizer
+from nltk.tokenize import RegexpTokenizer
+
+import gensim
+
+word2vec_path = "GoogleNews-vectors-negative300.bin.gz"
+word2vec = gensim.models.KeyedVectors.load_word2vec_format(word2vec_path, binary=True)
 
 ## Load and prepare data
 print('read data')
@@ -37,7 +43,10 @@ score = score.drop(score.index[nan_rows])
 tokens_str = tokens_str.drop(tokens_str.index[nan_rows])
 
 list_labels = score['score'].tolist()
-list_corpus = tokens_str['tokens_str'].tolist()
+
+tokenizer = RegexpTokenizer(r'\w+')
+tokens_clean = pd.DataFrame()
+tokens_clean['tokens_clean'] = tokens_str['tokens_str'].apply(tokenizer.tokenize)
 
 ## Define functions
 def get_metrics(y_test, y_predicted):  
@@ -81,16 +90,26 @@ def plot_confusion_matrix(cm, classes,normalize=False,title='',cmap=plt.cm.winte
     return plt
 
 
-def cv(input):
-    count_vectorizer = CountVectorizer()
+def get_average_word2vec(tokens_list, vector, generate_missing=False, k=300):
+    if len(tokens_list)<1:
+        return np.zeros(k)
+    if generate_missing:
+        vectorized = [vector[word] if word in vector else np.random.rand(k) for word in tokens_list]
+    else:
+        vectorized = [vector[word] if word in vector else np.zeros(k) for word in tokens_list]
+    length = len(vectorized)
+    summed = np.sum(vectorized, axis=0)
+    averaged = np.divide(summed, length)
+    return averaged
 
-    emb = count_vectorizer.fit_transform(input)
 
-    return emb, count_vectorizer
+def get_word2vec_embeddings(vectors, clean_questions, generate_missing=False):
+    embeddings = tokens_clean['tokens_clean'].apply(lambda x: get_average_word2vec(x, vectors, generate_missing=generate_missing))
+    return list(embeddings)
 
 
 # Model with full rating scale
-print('prepare and run Bag of Words model with full rating scale')
+print('prepare and run word2vec model with full rating scale')
 
 X_train, X_test, y_train, y_test = train_test_split(list_corpus, list_labels, test_size=0.2,random_state=40)
 
@@ -111,7 +130,7 @@ print('evaluate & plot tf-idf model')
 cm = confusion_matrix(y_test, y_predicted_count)
 fig = plt.figure(figsize=(10, 10))
 plot = plot_confusion_matrix(cm, classes=['1','2','3','4','5','6','7','8','9'], normalize=True, title='')
-plt.savefig('Confusion_Matrix_BoW_full_scale.png', bbox_inches='tight')
+plt.savefig('Confusion_Matrix_word2vec_full_scale.png', bbox_inches='tight')
 
 
 ## Summarize to three categories
