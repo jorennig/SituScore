@@ -126,7 +126,7 @@ score[score['score'] == 7] = 3
 score[score['score'] == 8] = 3
 score[score['score'] == 9] = 3
 
-list_labels = score['score'].tolist()
+labels = score['score'].tolist()
 
 # Model with summarized rating scale
 print('prepare and run Bag of Words model with summarized rating scale')

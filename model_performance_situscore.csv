@@ -1,0 +1,26 @@
+﻿features,9 categories
+"﻿accuracy = 0.070, precision = 0.175, recall = 0.070, f1 = 0.080",
+,
+features,3 categories
+"﻿accuracy = 0.291, precision = 0.491, recall = 0.291, f1 = 0.267",
+,
+,
+tf-idf,9 categories
+"﻿accuracy = 0.172, precision = 0.211, recall = 0.172, f1 = 0.181",
+,
+tf-idf,3 categories
+"﻿accuracy = 0.470, precision = 0.541, recall = 0.470, f1 = 0.486",
+,
+,
+word2vec,9 categories
+"﻿accuracy = 0.098, precision = 0.192, recall = 0.098, f1 = 0.111",
+,
+word2vec,3 categories
+"﻿accuracy = 0.340, precision = 0.510, recall = 0.340, f1 = 0.345",
+,
+,
+bag of words,9 categories
+"﻿accuracy = 0.183, precision = 0.211, recall = 0.183, f1 = 0.191",
+,
+bag of words,3 categories
+"﻿accuracy = 0.478, precision = 0.538, recall = 0.478, f1 = 0.494",
