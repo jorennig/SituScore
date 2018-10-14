@@ -11,7 +11,6 @@ In a first analysis step, a sentiment analysis was conducted using the VADER pac
 
 First, all features derived from the the previous steps (pre-processing, PoS tagging, sentiment analysis) were used in a multinomial logistic regression with 9 categories (situational awareness scores from 1 to 9).
 
-In a next analysis step, a tf-idf (term frequency inverse document frequency) model was implemented in a multinomial logistic regression with 9 categories. This model classified with an overall accuracy of 
-
-
 <img src="https://github.com/jorennig/SituScore/blob/master/Confusion_Matrix_features_full_scale.png" alt="CM" width="300" height="300">
+
+In a next analysis step, a tf-idf (term frequency inverse document frequency) model was implemented in a multinomial logistic regression with 9 categories. This model classified with an overall accuracy of 
