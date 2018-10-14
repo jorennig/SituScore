@@ -16,3 +16,8 @@ Confusion matrix of the feature-based model with all 9 categories:
 <img src="https://github.com/jorennig/SituScore/blob/master/Confusion_Matrix_features_full_scale.png" alt="CM" width="300" height="300">
 
 In a next analysis step, a tf-idf (term frequency inverse document frequency) model was implemented in a multinomial logistic regression with 9 categories. This model classified with an overall accuracy of 
+
+
+
+https://github.com/jorennig/SituScore/blob/master/Confusion_Matrix_tfidf_full_scale.png
+
