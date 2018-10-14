@@ -9,7 +9,8 @@ The data set consisted of 500 000 answers and the corresponding ratings. First, 
 
 In a first analysis step, a sentiment analysis was conducted using the VADER package from NLTK. For each statement, a sentiment score was derived. VADER gives a compound sentiment score ranging from -1 (primarily negative sentiment content) to 1 (primarily positive sentiment content). For later analysis, the absolute value of this analysis was stored since the direction of the compound value was not of interest. The sentiment analysis was first applied to the entire statement and then repeated per sentence to calculate an average sentiment score and the dispersion (standard deviation) of emotional content across the answer. Additionally, the sentiment analysis was conducted wordwise to determine the percentage of emotional words per answer. The whole analysis provided 4 different sentiment based features: sentiment score of full answer, average sentiment score (across sentences), dispersion of sentiment score (standard deviation across sentences) and the pecentage of emotional words per statement.
 
-First, all features derived from the the previous steps (pre-processing, PoS tagging, sentiment analysis) were used in a multinomial logistic regression with 9 categories (situational awareness scores from 1 to 9).
+First, all features derived from the the previous steps (pre-processing, PoS tagging, sentiment analysis) were used in a multinomial logistic regression with 9 categories (situational awareness scores from 1 to 9). This model did not perform all too well and classified the different ratings witn an overall accuracy of 7% (see overview of all classification metrics in the file model_performance_situscore.csv in this repository).
+Confusion matrix of the feature-based model with all 9 categories:
 
 <img src="https://github.com/jorennig/SituScore/blob/master/Confusion_Matrix_features_full_scale.png" alt="CM" width="300" height="300">
 
