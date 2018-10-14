@@ -19,5 +19,10 @@ In a next analysis step, a tf-idf (term frequency inverse document frequency) mo
 
 
 
-https://github.com/jorennig/SituScore/blob/master/Confusion_Matrix_tfidf_full_scale.png
+<img src="https://github.com/jorennig/SituScore/blob/master/Confusion_Matrix_tfidf_full_scale.png" alt="CM" width="300" height="300">
+
+
+
+<img src="https://github.com/jorennig/SituScore/blob/master/Confusion_Matrix_tfidf_summarized.png" alt="CM" width="300" height="300">
+
 
