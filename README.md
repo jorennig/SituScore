@@ -22,16 +22,19 @@ Confusion matrix of the tf-idf model with all 9 categories:
 <img src="https://github.com/jorennig/SituScore/blob/master/Confusion_Matrix_tfidf_full_scale.png" alt="CM" width="300" height="300">
 
 Therefore, in a next step, rating were summarized:
+
 [1,2,3] = 1
 
 [4,5,6] = 2
 
 [7,8,9] = 3
 
-A tf-idf model with 3 categories classified with an overall accuracy of 47% (14% percent above chance level of 33%; see overview of all classification metrics in the file model_performance_situscore.csv). 
+A tf-idf model with 3 categories classified with an overall accuracy of 47% (14% percent above chance level of 33%; see overview of all classification metrics in the file model_performance_situscore.csv). This model with summarized ratings showed a significant improvemt of performance over the model using all 9 rating categories.
 
-Confusion matrix of the tf-idf model with summarized categories:
+Confusion matrix of the tf-idf model with summarized ratings:
 
 <img src="https://github.com/jorennig/SituScore/blob/master/Confusion_Matrix_tfidf_summarized.png" alt="CM" width="300" height="300">
+
+
 
 
